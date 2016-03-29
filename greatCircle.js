@@ -42,10 +42,41 @@ class greatCircle {
 	}
 
 	/**
+	 * The raw calculation according to the haversine formula. 
+	 * Big thanks to http://www.movable-type.co.uk/scripts/latlong.html for the brilliant explanation of
+	 * different methods of determining great circle distance!
+	 * @param  {object} from A valid point
+	 * @param  {object} to   A valid point
+	 * @return {number}      Distance in meters
+	 * @static
+	 */
+	static getDistanceBetween(from, to) {
+		from = greatCircle._getValidPoint(from);
+		to = greatCircle._getValidPoint(to);
+
+		var radLatFrom = greatCircle.floatToRadians(from.lat);
+		var radLatTo = greatCircle.floatToRadians(to.lat);
+
+		var radDeltaLat = greatCircle.floatToRadians(to.lat - from.lat);
+		var radDeltaLon = greatCircle.floatToRadians(to.lon - from.lon);
+
+		var a = Math.sin(radDeltaLat / 2) * Math.sin(radDeltaLat / 2) +
+		        Math.cos(radLatFrom) * Math.cos(radLatTo) *
+		        Math.sin(radDeltaLon / 2) * Math.sin(radDeltaLon / 2);
+
+		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+		// Precision less than a meter is not really accurate here
+
+		return parseInt(greatCircle.earthRadius * c);
+	}
+
+	/**
 	 * Limit a list to a number of items
 	 * @param  {object} list  The Array/Object to limit
 	 * @param  {number} limit Number of allowed items as integer
 	 * @return {object}       Truncated Array/Object
+	 * @static
 	 */
 	static _limitDistanceList(list, limit) {
 		limit = greatCircle._getValidLimit(limit);
@@ -67,6 +98,7 @@ class greatCircle {
 	 * @param  {object} list      List of distances, as returned by _getDistanceList()
 	 * @param  {mixed} direction A valid direction ('asc' || 'desc' || false)
 	 * @return {object}           The sorted List
+	 * @static
 	 */
 	static _sortDistanceList(list, direction) {
 		direction = greatCircle._getValidSort(direction);
@@ -103,6 +135,7 @@ class greatCircle {
 	 * @param  {object} from A valid point
 	 * @param  {object} to   An array of or a single valid point
 	 * @return {object}      An Array containing the distances for from to each to point.
+	 * @static
 	 */
 	static _getDistanceList(from, to) {
 		from = greatCircle._getValidPoint(from);
@@ -123,38 +156,10 @@ class greatCircle {
 	}
 
 	/**
-	 * The raw calculation according to the haversine formula. 
-	 * Big thanks to http://www.movable-type.co.uk/scripts/latlong.html for the brilliant explanation of
-	 * different methods of determining great circle distance!
-	 * @param  {object} from A valid point
-	 * @param  {object} to   A valid point
-	 * @return {number}      Distance in meters
-	 */
-	static getDistanceBetween(from, to) {
-		from = greatCircle._getValidPoint(from);
-		to = greatCircle._getValidPoint(to);
-
-		var radLatFrom = greatCircle.floatToRadians(from.lat);
-		var radLatTo = greatCircle.floatToRadians(to.lat);
-
-		var radDeltaLat = greatCircle.floatToRadians(to.lat - from.lat);
-		var radDeltaLon = greatCircle.floatToRadians(to.lon - from.lon);
-
-		var a = Math.sin(radDeltaLat / 2) * Math.sin(radDeltaLat / 2) +
-		        Math.cos(radLatFrom) * Math.cos(radLatTo) *
-		        Math.sin(radDeltaLon / 2) * Math.sin(radDeltaLon / 2);
-
-		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-		// Precision less than a meter is not really accurate here
-
-		return parseInt(greatCircle.earthRadius * c);
-	}
-
-	/**
 	 * Check/Clean/Format a given list for validity.
 	 * @param  {object} list The list to check
 	 * @return {object}      An Array containing valid points
+	 * @static
 	 */
 	static _getValidPointList(list) {
 		try {
@@ -181,6 +186,7 @@ class greatCircle {
 	 * Check/Clean/Format a given point for validity
 	 * @param  {object} point The point to check
 	 * @return {object}       A valid point
+	 * @static
 	 */
 	static _getValidPoint(point) {
 		if(typeof point == 'undefined') throw "greatCircle: No coordinates given";
@@ -199,6 +205,7 @@ class greatCircle {
 	 * Get a valid sorting parameter. Either 'asc', 'desc', or false for no sorting.
 	 * @param  {mixed} input Input to check
 	 * @return {mixed}       Valid sorting parameter for use with further functions
+	 * @static
 	 */
 	static _getValidSort(input) {
 		return (input && input == 'asc') ? 'asc' : (input && input == 'desc') ? 'desc' : false;
@@ -208,6 +215,7 @@ class greatCircle {
 	 * Get a valid limit parameter. Can either be false or a positive integer
 	 * @param  {mixed} input Input to check
 	 * @return {mixed}       Valid limit parameter
+	 * @static
 	 */
 	static _getValidLimit(input) {
 		return (typeof input == 'boolean') ? false : (input === null) ? false : isNaN(input) ? false : (parseInt(input) > 0) ? parseInt(input) : false;
@@ -216,6 +224,7 @@ class greatCircle {
 	/**
 	 * The earths radius as required by the haversine formula
 	 * @type {Number}
+	 * @static
 	 */
 	static earthRadius = 6371000;
 
@@ -223,6 +232,7 @@ class greatCircle {
 	 * Convert a degree as floating point number to degree radians
 	 * @param  {number} number The input degree
 	 * @return {number}        Degree Radians
+	 * @static
 	 */
 	static floatToRadians(number) {
 		return number * Math.PI / 180;

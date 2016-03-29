@@ -57,6 +57,10 @@ myDistances will contain a list of the distances between Google HQ and One Marke
 
 # API-Documentation
 
+
+
+<!-- Start greatCircle.js -->
+
 ## greatCircle
 
 Great Circle calculation
@@ -83,46 +87,7 @@ Calculate a list of points. Can override default 'sort' and 'limit' by property.
 
 * **array** The resulting distance list with given points and distances
 
-## _limitDistanceList(list, limit)
-
-Limit a list to a number of items
-
-### Params:
-
-* **object** *list* The Array/Object to limit
-* **number** *limit* Number of allowed items as integer
-
-### Return:
-
-* **object** Truncated Array/Object
-
-## _sortDistanceList(list, direction)
-
-Sort a list of distances (as determined by the distance property of items)
-
-### Params:
-
-* **object** *list* List of distances, as returned by _getDistanceList()
-* **mixed** *direction* A valid direction ('asc' || 'desc' || false)
-
-### Return:
-
-* **object** The sorted List
-
-## _getDistanceList(from, to)
-
-Get a list of distances for from to each to point
-
-### Params:
-
-* **object** *from* A valid point
-* **object** *to* An array of or a single valid point
-
-### Return:
-
-* **object** An Array containing the distances for from to each to point.
-
-## getDistanceBetween(from, to)
+## *static* getDistanceBetween(from, to)
 
 The raw calculation according to the haversine formula. 
 Big thanks to http://www.movable-type.co.uk/scripts/latlong.html for the brilliant explanation of
@@ -137,7 +102,46 @@ different methods of determining great circle distance!
 
 * **number** Distance in meters
 
-## _getValidPointList(list)
+## *static* _limitDistanceList(list, limit)
+
+Limit a list to a number of items
+
+### Params:
+
+* **object** *list* The Array/Object to limit
+* **number** *limit* Number of allowed items as integer
+
+### Return:
+
+* **object** Truncated Array/Object
+
+## *static* _sortDistanceList(list, direction)
+
+Sort a list of distances (as determined by the distance property of items)
+
+### Params:
+
+* **object** *list* List of distances, as returned by _getDistanceList()
+* **mixed** *direction* A valid direction ('asc' || 'desc' || false)
+
+### Return:
+
+* **object** The sorted List
+
+## *static* _getDistanceList(from, to)
+
+Get a list of distances for from to each to point
+
+### Params:
+
+* **object** *from* A valid point
+* **object** *to* An array of or a single valid point
+
+### Return:
+
+* **object** An Array containing the distances for from to each to point.
+
+## *static* _getValidPointList(list)
 
 Check/Clean/Format a given list for validity.
 
@@ -149,7 +153,7 @@ Check/Clean/Format a given list for validity.
 
 * **object** An Array containing valid points
 
-## _getValidPoint(point)
+## *static* _getValidPoint(point)
 
 Check/Clean/Format a given point for validity
 
@@ -161,7 +165,7 @@ Check/Clean/Format a given point for validity
 
 * **object** A valid point
 
-## _getValidSort(input)
+## *static* _getValidSort(input)
 
 Get a valid sorting parameter. Either 'asc', 'desc', or false for no sorting.
 
@@ -173,7 +177,7 @@ Get a valid sorting parameter. Either 'asc', 'desc', or false for no sorting.
 
 * **mixed** Valid sorting parameter for use with further functions
 
-## _getValidLimit(input)
+## *static* _getValidLimit(input)
 
 Get a valid limit parameter. Can either be false or a positive integer
 
@@ -187,7 +191,7 @@ Get a valid limit parameter. Can either be false or a positive integer
 
 The earths radius as required by the haversine formula
 
-## floatToRadians(number)
+## *static* floatToRadians(number)
 
 Convert a degree as floating point number to degree radians
 
