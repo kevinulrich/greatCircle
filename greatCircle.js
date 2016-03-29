@@ -1,5 +1,10 @@
 "use strict";
 
+/**
+ * Great Circle calculation
+ * @author  Kevin Ulrich
+ * @class  greatCircle
+ */
 class greatCircle {
 	
 	/**
