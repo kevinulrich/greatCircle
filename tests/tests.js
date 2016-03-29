@@ -63,7 +63,354 @@ QUnit.test("Coordinate list validation", function( assert ) {
 });
 
 QUnit.test("Calculating Distance between known points", function( assert ) {
-	// We are disregarding the slight error margin the haversine formula might have by rounding to meters
-	assert.equal(parseInt(greatCircle.getDistanceBetween(googleHQ, oneMarket)), 50038, 'Distance between Google HQ and One Market SF');
-	assert.equal(parseInt(greatCircle.getDistanceBetween(scotiaSquare, universityOfZambia)), 11350402, 'Distance between Scotia Square in Nova Scotia and the University of Zambia');
+	assert.equal(greatCircle.getDistanceBetween(googleHQ, oneMarket), 50038, 'Distance between Google HQ and One Market SF');
+	assert.equal(greatCircle.getDistanceBetween(scotiaSquare, universityOfZambia), 11350402, 'Distance between Scotia Square in Nova Scotia and the University of Zambia');
+	assert.throws(function(){greatCircle.getDistanceBetween(scotiaSquare, 'hello world')}, 'Distance between One Market and an invalid point');
+});
+
+QUnit.test("Calculating Distance list between known points", function( assert ) {
+	var list = greatCircle._getDistanceList(googleHQ, [oneMarket, universityOfZambia, scotiaSquare, stangenpyramide]);
+
+	var expected = [
+		{
+			"distance": 50038,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 37.791574,
+				"lon": -122.404912
+			}
+		},
+		{
+			"distance": 16212320,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": -15.3924928,
+				"lon": 28.3186342
+			}
+		},
+		{
+			"distance": 4866320,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 44.6488187,
+				"lon": -63.5767536
+			}
+		},
+		{
+		"distance": 9163842,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 50.0104469,
+				"lon": 8.7194302,
+				"payload": "Stangenpyramide"
+			}
+		}
+	];
+
+	var sortedAsc = greatCircle._sortDistanceList(JSON.parse(JSON.stringify(list)), 'asc');
+
+	var expectedSortAsc = [
+		{
+			"distance": 50038,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 37.791574,
+				"lon": -122.404912
+			}
+		},
+		{
+			"distance": 4866320,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 44.6488187,
+				"lon": -63.5767536
+			}
+		},
+		{
+		"distance": 9163842,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 50.0104469,
+				"lon": 8.7194302,
+				"payload": "Stangenpyramide"
+			}
+		},
+		{
+			"distance": 16212320,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": -15.3924928,
+				"lon": 28.3186342
+			}
+		}
+	];
+
+	var sortedDesc = greatCircle._sortDistanceList(JSON.parse(JSON.stringify(list)), 'desc');
+
+	var expectedSortDesc = [
+		{
+			"distance": 16212320,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": -15.3924928,
+				"lon": 28.3186342
+			}
+		},
+		{
+			"distance": 9163842,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 50.0104469,
+				"lon": 8.7194302,
+				"payload": "Stangenpyramide"
+			}
+		},
+		{
+			"distance": 4866320,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 44.6488187,
+				"lon": -63.5767536
+			}
+		},
+		{
+			"distance": 50038,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 37.791574,
+				"lon": -122.404912
+			}
+		}
+		
+	];
+
+	assert.deepEqual(list, expected, 'Distance between Google HQ and a list of points');
+	assert.deepEqual(sortedAsc, expectedSortAsc, 'Sorting it ascending');
+	assert.deepEqual(sortedDesc, expectedSortDesc, 'Sorting it descending');
+});
+
+QUnit.test("Using Settings and defaults", function( assert ) {
+	var gc = new greatCircle();
+
+	var list = gc.calc({
+		from: googleHQ, 
+		to: [oneMarket, universityOfZambia, scotiaSquare, stangenpyramide]
+	});
+
+	var expected = [
+		{
+			"distance": 50038,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 37.791574,
+				"lon": -122.404912
+			}
+		},
+		{
+			"distance": 16212320,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": -15.3924928,
+				"lon": 28.3186342
+			}
+		},
+		{
+			"distance": 4866320,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 44.6488187,
+				"lon": -63.5767536
+			}
+		},
+		{
+		"distance": 9163842,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 50.0104469,
+				"lon": 8.7194302,
+				"payload": "Stangenpyramide"
+			}
+		}
+	];
+
+	var gc2 = new greatCircle({
+		sort: 'asc'
+	});
+
+	var listAsc = gc2.calc({
+		from: googleHQ, 
+		to: [oneMarket, universityOfZambia, scotiaSquare, stangenpyramide]
+	});
+
+	var expectedSortAsc = [
+		{
+			"distance": 50038,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 37.791574,
+				"lon": -122.404912
+			}
+		},
+		{
+			"distance": 4866320,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 44.6488187,
+				"lon": -63.5767536
+			}
+		},
+		{
+		"distance": 9163842,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 50.0104469,
+				"lon": 8.7194302,
+				"payload": "Stangenpyramide"
+			}
+		},
+		{
+			"distance": 16212320,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": -15.3924928,
+				"lon": 28.3186342
+			}
+		}
+	];
+
+	var gc3 = new greatCircle({
+		sort: 'asc'
+	});
+
+	var listDesc = gc3.calc({
+		from: googleHQ, 
+		to: [oneMarket, universityOfZambia, scotiaSquare, stangenpyramide],
+		sort: 'desc',
+		limit: 3
+	});
+
+	var expectedSortDesc = [
+		{
+			"distance": 16212320,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": -15.3924928,
+				"lon": 28.3186342
+			}
+		},
+		{
+			"distance": 9163842,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 50.0104469,
+				"lon": 8.7194302,
+				"payload": "Stangenpyramide"
+			}
+		},
+		{
+			"distance": 4866320,
+			"from": {
+				"lat": 37.4203139,
+				"lon": -122.0839101,
+				"payload": "Google Headquarters"
+			},
+			"to": {
+				"lat": 44.6488187,
+				"lon": -63.5767536
+			}
+		}
+		
+	];
+
+	assert.deepEqual(list, expected, 'Calculating using default values');
+	assert.deepEqual(listAsc, expectedSortAsc, 'Sorting it ascending');
+	assert.deepEqual(listDesc, expectedSortDesc, 'Overwriting sorting in calc()');
 });
