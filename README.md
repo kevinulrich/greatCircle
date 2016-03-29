@@ -1,6 +1,60 @@
 # greatCircle
 Calculate the distance between a point and a list of points
 
+# Example usage
+
+Define your points and send them to calc(). Points can have a payload property to help you identify the results or send other data through greatCircle.
+
+```javascript
+var googleHQ = {lat: 37.4203139, lon: -122.0839101, payload: 'Google Headquarters'};
+var oneMarket = {lat: 37.791574, lon: -122.404912, payload: 'One Market'};
+var scotiaSquare = {lat: 44.6488187, lon: -63.5767536, payload: 'Scotia Square'};
+
+var gc = new greatCircle({
+	sort: 'asc', // Set the default sorting to ascending
+	limit: 5 // Set the result limit to 5
+});
+
+var myDistances = gc.calc({
+	from: googleHQ, 
+	to: [oneMarket, scotiaSquare],
+	sort: 'desc' // We can override sorting here, but we don't have to
+});
+```
+
+myDistances will contain a list of the distances between Google HQ and One Market as well as between Google HQ and Scotia Square:
+
+```javascript
+[
+	{
+		"from": {
+			"lat":37.4203139,
+			"lon":-122.0839101,
+			"payload":"Google Headquarters"
+		},
+		"to": {
+			"lat":44.6488187,
+			"lon":-63.5767536,
+			"payload":"Scotia Square"
+		},
+		"distance":4866320
+	},
+	{
+		"from": {
+			"lat":37.4203139,
+			"lon":-122.0839101,
+			"payload":"Google Headquarters"
+		},
+		"to": {
+			"lat":37.791574,
+			"lon":-122.404912,
+			"payload":"One Market"
+		},
+		"distance":50038
+	}
+]
+```
+
 # API-Documentation
 
 ## greatCircle
