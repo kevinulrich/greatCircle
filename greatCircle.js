@@ -15,7 +15,7 @@ class greatCircle {
 		if(typeof opts != 'object') opts = {};
 
 		this.sort = greatCircle._getValidSort(opts.sort);
-		this.limit = greatCircle._getValidLimit(opts.sort);
+		this.limit = greatCircle._getValidLimit(opts.limit);
 	}
 
 	/**
