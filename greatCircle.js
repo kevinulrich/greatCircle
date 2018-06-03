@@ -222,13 +222,6 @@ class greatCircle {
 	}
 
 	/**
-	 * The earths radius as required by the haversine formula
-	 * @type {Number}
-	 * @static
-	 */
-	static earthRadius = 6371000;
-
-	/**
 	 * Convert a degree as floating point number to degree radians
 	 * @param  {number} number The input degree
 	 * @return {number}        Degree Radians
@@ -238,3 +231,12 @@ class greatCircle {
 		return number * Math.PI / 180;
 	}
 }
+
+/**
+ * The earths radius as required by the haversine formula
+ * @type {Number}
+ * @static
+ */
+greatCircle.earthRadius = 6371000;
+
+module.exports = greatCircle;
