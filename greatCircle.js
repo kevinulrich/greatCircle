@@ -224,7 +224,7 @@ class greatCircle {
 	 * @static
 	 */
 	static _getValidLimit(input) {
-		if(typeof input !== 'boolean' && isNaN(input)) {
+		if(isNaN(parseInt(input))) {
 			return false;
 		}
 
