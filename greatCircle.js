@@ -148,7 +148,7 @@ class greatCircle {
 				let distance = greatCircle.getDistanceBetween(from, to[item]);
 				distanceList.push({from: from, to: to[item], distance: distance});
 			} catch(e) {
-				console.error(e);
+				continue;
 			}
 		}
 
@@ -175,7 +175,7 @@ class greatCircle {
 			try {
 				cleanList.push(greatCircle._getValidPoint(list[item]));
 			} catch(e) {
-				console.error(e);
+				continue;
 			}
 		}
 
