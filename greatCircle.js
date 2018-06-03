@@ -24,9 +24,6 @@ class greatCircle {
 	 * @return {array}      The resulting distance list with given points and distances
 	 */
 	calc(opts) {
-		if(typeof opts.from != 'object' || typeof opts.from.lat == 'undefined' || typeof opts.from.lon == 'undefined') throw "greatCircle: From needs to be an object with at least lat and lon";
-		if(typeof opts.to != 'object') throw "greatCircle: To needs to be an object with at least lat and lon";
-
 		var tempSort = typeof opts.sort != 'undefined' ? greatCircle._getValidSort(opts.sort) : this.sort;
 		var tempLimit = typeof opts.limit != 'undefined' ? greatCircle._getValidLimit(opts.limit) : this.limit;
 
@@ -103,31 +100,40 @@ class greatCircle {
 	static _sortDistanceList(list, direction) {
 		direction = greatCircle._getValidSort(direction);
 
-		if(direction != 'asc' && direction != 'desc') return list;
-
 		// Use selection sort for now
 
 		var sortedList = [];
 
 		while(list.length > 0) {
-			let maxIdx = 0;
-
-			for(var item in list) {
-				let thisItem = list[item];
-
-				if(typeof thisItem.distance == 'undefined') continue;
-
-				if(thisItem.distance >= list[maxIdx].distance) {
-					maxIdx = item;
-				}
-			}	
-
-			sortedList.push(list.splice(maxIdx, 1)[0]);
+			sortedList.push(greatCircle._spliceLargestListItem(list));
 		}
 
 		if(direction == 'asc') sortedList.reverse();
 
 		return sortedList;
+	}
+
+	/**
+	 * Get the list item with the largest distance, remove it from the list
+	 * and return it
+	 * @param {object} list       List of distances, as returned by _getDistanceList()
+	 * @return {object}           The sorted List
+	 * @static
+	 */
+	static _spliceLargestListItem(list) {
+		var maxIdx = 0;
+
+		for(var item in list) {
+			let thisItem = list[item];
+
+			if(typeof thisItem.distance == 'undefined') continue;
+
+			if(thisItem.distance >= list[maxIdx].distance) {
+				maxIdx = item;
+			}
+		}	
+
+		return list.splice(maxIdx, 1)[0];
 	}
 
 	/**
@@ -189,16 +195,35 @@ class greatCircle {
 	 * @static
 	 */
 	static _getValidPoint(point) {
-		if(typeof point == 'undefined') throw "greatCircle: No coordinates given";
-		if(isNaN(point.lat) || isNaN(point.lon)) throw "greatCircle: Invalid coordinates";
-		if(parseFloat(point.lat) < -180 || parseFloat(point.lat) > 180) throw "greatCircle: Invalid coordinates";
-		if(parseFloat(point.lon) < -180 || parseFloat(point.lon) > 180) throw "greatCircle: Invalid coordinates";
+		if(typeof point === 'undefined') throw "greatCircle: No coordinates given";
+
+		if(!this._isValidDegree(point.lat) || !this._isValidDegree(point.lon)) {
+			throw "greatCircle: Invalid coordinates";
+		}
 
 		var cleanPoint = {lat: parseFloat(point.lat), lon: parseFloat(point.lon)};
 
 		if(typeof point.payload != 'undefined') cleanPoint.payload = point.payload;
 
 		return cleanPoint;
+	}
+
+	/**
+	 * Check whether a given value can plausibly be a degree
+	 * @param {number} The number to check
+	 * @return {boolean}
+	 * @static
+	 */
+	static _isValidDegree(degree) {
+		if(isNaN(degree)) {
+			return false;
+		}
+
+		if(Math.abs(parseFloat(degree) > 180)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -218,7 +243,15 @@ class greatCircle {
 	 * @static
 	 */
 	static _getValidLimit(input) {
-		return (typeof input == 'boolean') ? false : (input === null) ? false : isNaN(input) ? false : (parseInt(input) > 0) ? parseInt(input) : false;
+		if(isNaN(parseInt(input))) {
+			return false;
+		}
+
+		if(parseInt(input) < 0)  {
+			return false;
+		}
+
+		return parseInt(input);
 	}
 
 	/**
