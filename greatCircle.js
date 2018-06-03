@@ -150,12 +150,8 @@ class greatCircle {
 		var distanceList = [];
 
 		for(var item in to) {
-			try {
-				let distance = greatCircle.getDistanceBetween(from, to[item]);
-				distanceList.push({from: from, to: to[item], distance: distance});
-			} catch(e) {
-				continue;
-			}
+			let distance = greatCircle.getDistanceBetween(from, to[item]);
+			distanceList.push({from: from, to: to[item], distance: distance});
 		}
 
 		return distanceList;
