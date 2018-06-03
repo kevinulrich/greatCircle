@@ -1,6 +1,6 @@
 {
   "name": "@kevinulrich/greatcircle",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Calculate the distance between a point and a list of points",
   "main": "greatCircle.js",
   "directories": {
