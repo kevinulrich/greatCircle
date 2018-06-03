@@ -108,24 +108,35 @@ class greatCircle {
 		var sortedList = [];
 
 		while(list.length > 0) {
-			let maxIdx = 0;
-
-			for(var item in list) {
-				let thisItem = list[item];
-
-				if(typeof thisItem.distance == 'undefined') continue;
-
-				if(thisItem.distance >= list[maxIdx].distance) {
-					maxIdx = item;
-				}
-			}	
-
-			sortedList.push(list.splice(maxIdx, 1)[0]);
+			sortedList.push(greatCircle._spliceLargestListItem(list));
 		}
 
 		if(direction == 'asc') sortedList.reverse();
 
 		return sortedList;
+	}
+
+	/**
+	 * Get the list item with the largest distance, remove it from the list
+	 * and return it
+	 * @param {object} list       List of distances, as returned by _getDistanceList()
+	 * @return {object}           The sorted List
+	 * @static
+	 */
+	static _spliceLargestListItem(list) {
+		var maxIdx = 0;
+
+		for(var item in list) {
+			let thisItem = list[item];
+
+			if(typeof thisItem.distance == 'undefined') continue;
+
+			if(thisItem.distance >= list[maxIdx].distance) {
+				maxIdx = item;
+			}
+		}	
+
+		return list.splice(maxIdx, 1)[0];
 	}
 
 	/**
