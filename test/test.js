@@ -47,11 +47,13 @@ describe('Coordinate validation', function() {
 		var coord2 = false;
 		var coord3 = {lat: '145.346.324', lon: 3425.46757};
 		var coord4 = '52.3525,3564363.34';
+		var coord5 = {lat: 182.1234, lon: 50.5747};
 
 		assert.deepEqual(greatCircle._getValidPoint(coord1), {lat: 52.1234, lon: 3.5747, payload: 'test'});
 		assert.throws(function() { greatCircle._getValidPoint(coord2) });
 		assert.throws(function() { greatCircle._getValidPoint(coord3) });
 		assert.throws(function() { greatCircle._getValidPoint(coord4) });
+		assert.throws(function() { greatCircle._getValidPoint(coord5) });
 	});
 });
 
@@ -76,6 +78,64 @@ describe('Distance calculation', function() {
 		assert.equal(greatCircle.getDistanceBetween(googleHQ, oneMarket), 50038);
 		assert.equal(greatCircle.getDistanceBetween(scotiaSquare, universityOfZambia), 11350402);
 		assert.throws(function(){greatCircle.getDistanceBetween(scotiaSquare, 'hello world')});
+	});
+
+	it('should return the correct distances for a list of points and sort accordingly while ignoring incorrect points', function() {
+		var list = greatCircle._getDistanceList(googleHQ, [oneMarket, {lat: 122.1234, lon: 250.5747}, universityOfZambia, scotiaSquare, stangenpyramide]);
+
+		var expected = [
+			{
+				"distance": 50038,
+				"from": {
+					"lat": 37.4203139,
+					"lon": -122.0839101,
+					"payload": "Google Headquarters"
+				},
+				"to": {
+					"lat": 37.791574,
+					"lon": -122.404912
+				}
+			},
+			{
+				"distance": 16212320,
+				"from": {
+					"lat": 37.4203139,
+					"lon": -122.0839101,
+					"payload": "Google Headquarters"
+				},
+				"to": {
+					"lat": -15.3924928,
+					"lon": 28.3186342
+				}
+			},
+			{
+				"distance": 4866320,
+				"from": {
+					"lat": 37.4203139,
+					"lon": -122.0839101,
+					"payload": "Google Headquarters"
+				},
+				"to": {
+					"lat": 44.6488187,
+					"lon": -63.5767536
+				}
+			},
+			{
+			"distance": 9163842,
+				"from": {
+					"lat": 37.4203139,
+					"lon": -122.0839101,
+					"payload": "Google Headquarters"
+				},
+				"to": {
+					"lat": 50.0104469,
+					"lon": 8.7194302,
+					"payload": "Stangenpyramide"
+				}
+			}
+		];
+
+		assert.deepEqual(list, expected);
 	});
 
 	it('should return the correct distances for a list of points and sort accordingly', function() {
