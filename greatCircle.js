@@ -148,7 +148,7 @@ class greatCircle {
 				let distance = greatCircle.getDistanceBetween(from, to[item]);
 				distanceList.push({from: from, to: to[item], distance: distance});
 			} catch(e) {
-				console.error(e);
+				continue;
 			}
 		}
 
@@ -175,7 +175,7 @@ class greatCircle {
 			try {
 				cleanList.push(greatCircle._getValidPoint(list[item]));
 			} catch(e) {
-				console.error(e);
+				continue;
 			}
 		}
 
@@ -222,13 +222,6 @@ class greatCircle {
 	}
 
 	/**
-	 * The earths radius as required by the haversine formula
-	 * @type {Number}
-	 * @static
-	 */
-	static earthRadius = 6371000;
-
-	/**
 	 * Convert a degree as floating point number to degree radians
 	 * @param  {number} number The input degree
 	 * @return {number}        Degree Radians
@@ -238,3 +231,12 @@ class greatCircle {
 		return number * Math.PI / 180;
 	}
 }
+
+/**
+ * The earths radius as required by the haversine formula
+ * @type {Number}
+ * @static
+ */
+greatCircle.earthRadius = 6371000;
+
+module.exports = greatCircle;

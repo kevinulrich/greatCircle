@@ -1,0 +1,33 @@
+{
+  "name": "@kevinulrich/greatcircle",
+  "version": "0.1.0",
+  "description": "Calculate the distance between a point and a list of points",
+  "main": "greatCircle.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinulrich/greatCircle.git"
+  },
+  "keywords": [
+    "great",
+    "circle",
+    "geography",
+    "world",
+    "calculation",
+    "distance"
+  ],
+  "author": "Kevin Ulrich",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kevinulrich/greatCircle/issues"
+  },
+  "homepage": "https://github.com/kevinulrich/greatCircle#readme",
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  }
+}
