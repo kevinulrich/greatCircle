@@ -103,8 +103,6 @@ class greatCircle {
 	static _sortDistanceList(list, direction) {
 		direction = greatCircle._getValidSort(direction);
 
-		if(direction != 'asc' && direction != 'desc') return list;
-
 		// Use selection sort for now
 
 		var sortedList = [];
