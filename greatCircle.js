@@ -24,9 +24,6 @@ class greatCircle {
 	 * @return {array}      The resulting distance list with given points and distances
 	 */
 	calc(opts) {
-		if(typeof opts.from != 'object' || typeof opts.from.lat == 'undefined' || typeof opts.from.lon == 'undefined') throw "greatCircle: From needs to be an object with at least lat and lon";
-		if(typeof opts.to != 'object') throw "greatCircle: To needs to be an object with at least lat and lon";
-
 		var tempSort = typeof opts.sort != 'undefined' ? greatCircle._getValidSort(opts.sort) : this.sort;
 		var tempLimit = typeof opts.limit != 'undefined' ? greatCircle._getValidLimit(opts.limit) : this.limit;
 
