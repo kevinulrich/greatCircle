@@ -1,6 +1,16 @@
 # greatCircle
 Calculate the distance between a point and a list of points
 
+[![Build Status](https://travis-ci.org/kevinulrich/greatCircle.svg?branch=master)](https://travis-ci.org/kevinulrich/greatCircle)
+
+[![codecov](https://codecov.io/gh/kevinulrich/greatCircle/branch/master/graph/badge.svg)](https://codecov.io/gh/kevinulrich/greatCircle)
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/954e24edb74d15ead6cb/maintainability)](https://codeclimate.com/github/kevinulrich/greatCircle/maintainability)
+
+```
+npm install @kevinulrich/greatcircle
+```
+
 # Example usage
 
 Define your points and send them to calc(). Points can have a payload property to help you identify the results or send other data through greatCircle.
