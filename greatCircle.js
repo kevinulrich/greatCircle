@@ -195,16 +195,35 @@ class greatCircle {
 	 * @static
 	 */
 	static _getValidPoint(point) {
-		if(typeof point == 'undefined') throw "greatCircle: No coordinates given";
-		if(isNaN(point.lat) || isNaN(point.lon)) throw "greatCircle: Invalid coordinates";
-		if(parseFloat(point.lat) < -180 || parseFloat(point.lat) > 180) throw "greatCircle: Invalid coordinates";
-		if(parseFloat(point.lon) < -180 || parseFloat(point.lon) > 180) throw "greatCircle: Invalid coordinates";
+		if(typeof point === 'undefined') throw "greatCircle: No coordinates given";
+
+		if(!this._isValidDegree(point.lat) || !this._isValidDegree(point.lon)) {
+			throw "greatCircle: Invalid coordinates";
+		}
 
 		var cleanPoint = {lat: parseFloat(point.lat), lon: parseFloat(point.lon)};
 
 		if(typeof point.payload != 'undefined') cleanPoint.payload = point.payload;
 
 		return cleanPoint;
+	}
+
+	/**
+	 * Check whether a given value can plausibly be a degree
+	 * @param {number} The number to check
+	 * @return {boolean}
+	 * @static
+	 */
+	static _isValidDegree(degree) {
+		if(isNaN(degree)) {
+			return false;
+		}
+
+		if(Math.abs(parseFloat(degree) > 180)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
