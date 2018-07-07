@@ -1,10 +1,12 @@
 # greatCircle
-Calculate the distance between a point and a list of points
+A JavaScript toolbox for working with geographical entities. Currently supports single points, calculating their distance and sorting them by distance. Ideas for future expansion:
+
+* Calculating Bearing between points
+* Taking into account differences in altitude
+* Calculating sunrise and sunset at a given point in time for a geographical position
 
 [![Build Status](https://travis-ci.org/kevinulrich/greatCircle.svg?branch=master)](https://travis-ci.org/kevinulrich/greatCircle)
-
 [![codecov](https://codecov.io/gh/kevinulrich/greatCircle/branch/master/graph/badge.svg)](https://codecov.io/gh/kevinulrich/greatCircle)
-
 [![Maintainability](https://api.codeclimate.com/v1/badges/954e24edb74d15ead6cb/maintainability)](https://codeclimate.com/github/kevinulrich/greatCircle/maintainability)
 
 ```
@@ -13,205 +15,82 @@ npm install @kevinulrich/greatcircle
 
 # Example usage
 
-Define your points and send them to calc(). Points can have a payload property to help you identify the results or send other data through greatCircle.
+This library ships different modules for working with geographical positions. Currently these are: Point, Vector and PointList
+
+## Working with Points
+
+The point constructor accepts an options object, no options actually have to be given. Missing latitude or longitude will default to 0, missing payload will default to an empty object. The payload can be any valid JavaScript object, string or number for example.
 
 ```javascript
-var googleHQ = {lat: 37.4203139, lon: -122.0839101, payload: 'Google Headquarters'};
-var oneMarket = {lat: 37.791574, lon: -122.404912, payload: 'One Market'};
-var scotiaSquare = {lat: 44.6488187, lon: -63.5767536, payload: 'Scotia Square'};
-
-var gc = new greatCircle({
-	sort: 'asc', // Set the default sorting to ascending
-	limit: 5 // Set the result limit to 5
-});
-
-var myDistances = gc.calc({
-	from: googleHQ, 
-	to: [oneMarket, scotiaSquare],
-	sort: 'desc' // We can override sorting here, but we don't have to
+var myPoint = new greatCircle.Point({
+	latitude: 50.0104469, 
+	longitude: 8.7194302, 
+	payload: 'Stangenpyramide'
 });
 ```
 
-myDistances will contain a list of the distances between Google HQ and One Market as well as between Google HQ and Scotia Square:
+You can make greatCircle calculate a vector between points by using the ```getVectorFrom``` or ```getVectorTo``` methods.
 
 ```javascript
-[
-	{
-		"from": {
-			"lat":37.4203139,
-			"lon":-122.0839101,
-			"payload":"Google Headquarters"
-		},
-		"to": {
-			"lat":44.6488187,
-			"lon":-63.5767536,
-			"payload":"Scotia Square"
-		},
-		"distance":4866320
-	},
-	{
-		"from": {
-			"lat":37.4203139,
-			"lon":-122.0839101,
-			"payload":"Google Headquarters"
-		},
-		"to": {
-			"lat":37.791574,
-			"lon":-122.404912,
-			"payload":"One Market"
-		},
-		"distance":50038
-	}
-]
+var myVector = myPoint.getVectorTo(anotherPoint)
 ```
 
-# API-Documentation
+greatCircle will help you validate geographical positions. You can simply input your latitude and longitude and it will not only check for valid numbers but also if the given latitude or longitude is within -180 and 180 degrees.
 
+```javascript
+var myPoint = new greatCircle.Point({
+	latitude: 564.564, 
+	longitude: 2, 
+	payload: 'Bad Point'
+});
 
+console.log(myPoint.isValid());
 
-<!-- Start greatCircle.js -->
+// Will output false
+```
 
-## greatCircle
+## Working with Vectors
 
-Great Circle calculation
+The vector constructor takes two arguments for a starting and an end point. These must be valid Point objects. The order of start an end is very important as a vector is directional. As of 2.0, the library is only able to calculate the distance of a vector so the order is not important right now, but will become important once bearing and other features come into play.
 
-Author: Kevin Ulrich
+```javascript
+var myVector = new greatCircle.Vector(myPoint, anotherPoint);
+```
 
-## constructor
+You can not easily calculate the length of the vector by getting the distance. ```getDistance``` will return a number in meters.
 
-Constructor 
+```javascript
+myVector.getDistance();
+```
 
-### Params:
+## Working with PointLists
 
-* **object** *opts* Option-Object. Accepts properties 'sort' ('asc' || 'desc' || false) and limit (positive integer || false)
+A pointlist is an aggregate of multiple points and can be used to determine the closest point to another or even sort all points by their distance to a given reference point.
 
-## calc(opts)
+```javascript
+var myList = new greatCircle.PointList();
 
-Calculate a list of points. Can override default 'sort' and 'limit' by property.
+myList.addPoint(myPoint);
+myList.addPoint(anotherPoint);
 
-### Params:
+console.log(myList.count());
+// Will output 2
+```
 
-* **object** *opts* Option-Object. Accepts properties from (valid point), to (array of or single valid point), sort (see constructor), limit (see constructor)
+To sort all points within the list by their distance to or from another point you can use the ```sortByDistanceTo``` method. It will accept two parameters: The reference point to be used and a sorting parameter which accepts ```asc``` or ```desc```, default is ```asc```;
 
-### Return:
+```javascript
+myList.sortByDistanceTo(referencePoint, 'desc');
+```
 
-* **array** The resulting distance list with given points and distances
+To retrieve the contained points, the PointList implements iteration as well as a ```toArray``` method.
 
-## *static* getDistanceBetween(from, to)
+```javascript
+var sortedPoints = myList.toArray();
 
-The raw calculation according to the haversine formula. 
-Big thanks to http://www.movable-type.co.uk/scripts/latlong.html for the brilliant explanation of
-different methods of determining great circle distance!
+for (let point of myList) {
+	console.log(point);
+}
 
-### Params:
-
-* **object** *from* A valid point
-* **object** *to* A valid point
-
-### Return:
-
-* **number** Distance in meters
-
-## *static* _limitDistanceList(list, limit)
-
-Limit a list to a number of items
-
-### Params:
-
-* **object** *list* The Array/Object to limit
-* **number** *limit* Number of allowed items as integer
-
-### Return:
-
-* **object** Truncated Array/Object
-
-## *static* _sortDistanceList(list, direction)
-
-Sort a list of distances (as determined by the distance property of items)
-
-### Params:
-
-* **object** *list* List of distances, as returned by _getDistanceList()
-* **mixed** *direction* A valid direction ('asc' || 'desc' || false)
-
-### Return:
-
-* **object** The sorted List
-
-## *static* _getDistanceList(from, to)
-
-Get a list of distances for from to each to point
-
-### Params:
-
-* **object** *from* A valid point
-* **object** *to* An array of or a single valid point
-
-### Return:
-
-* **object** An Array containing the distances for from to each to point.
-
-## *static* _getValidPointList(list)
-
-Check/Clean/Format a given list for validity.
-
-### Params:
-
-* **object** *list* The list to check
-
-### Return:
-
-* **object** An Array containing valid points
-
-## *static* _getValidPoint(point)
-
-Check/Clean/Format a given point for validity
-
-### Params:
-
-* **object** *point* The point to check
-
-### Return:
-
-* **object** A valid point
-
-## *static* _getValidSort(input)
-
-Get a valid sorting parameter. Either 'asc', 'desc', or false for no sorting.
-
-### Params:
-
-* **mixed** *input* Input to check
-
-### Return:
-
-* **mixed** Valid sorting parameter for use with further functions
-
-## *static* _getValidLimit(input)
-
-Get a valid limit parameter. Can either be false or a positive integer
-
-### Params:
-
-* **mixed** *input* Input to check
-
-### Return:
-
-* **mixed** Valid limit parameter
-
-The earths radius as required by the haversine formula
-
-## *static* floatToRadians(number)
-
-Convert a degree as floating point number to degree radians
-
-### Params:
-
-* **number** *number* The input degree
-
-### Return:
-
-* **number** Degree Radians
-
-<!-- End greatCircle.js -->
-
+// Will output all contained points by their distance in reference to the point and sorting given by a previous call to ```sortByDistanceTo```.
+```
