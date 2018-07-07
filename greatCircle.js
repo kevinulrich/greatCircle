@@ -2,8 +2,10 @@
 
 const Point = require('./lib/Point.js');
 const Vector = require('./lib/Vector.js');
+const PointList = require('./lib/PointList.js');
 
 module.exports = {
 	Point: Point,
-	Vector: Vector
+	Vector: Vector,
+	PointList: PointList
 };

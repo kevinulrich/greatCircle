@@ -13,6 +13,13 @@ var pointWithoutLongitude = new greatCircle.Point({latitude: 12});
 var vectorWithoutEnd = new greatCircle.Vector(googleHQ);
 var vectorWithoutAnything = new greatCircle.Vector();
 
+var list = new greatCircle.PointList();
+
+list.addPoint(oneMarket);
+list.addPoint(universityOfZambia);
+list.addPoint(scotiaSquare);
+list.addPoint(stangenpyramide);
+
 describe('Point validation', function() {
 	it('should reject impossible points', function() {
 		assert.equal(impossiblePoint.isValid(), false);
@@ -47,5 +54,44 @@ describe('Vector calculation', function() {
 		assert.equal(vectorWithoutAnything.end, null);
 		assert.equal(vectorWithoutAnything.isValid(), false);
 		assert.equal(vectorWithoutEnd.isValid(), false);
+	});
+});
+
+describe('Point lists', function() {
+	it('should return a correctly sorted list', function() {
+		list.sortByDistanceTo(googleHQ);
+
+		var result = list.toArray();
+
+		assert.deepEqual(result[0], oneMarket);
+		assert.deepEqual(result[1], scotiaSquare);
+		assert.deepEqual(result[2], stangenpyramide);
+		assert.deepEqual(result[3], universityOfZambia);
+
+		list.sortByDistanceTo(googleHQ, 'desc');
+
+		result = list.toArray();
+
+		assert.deepEqual(result[3], oneMarket);
+		assert.deepEqual(result[2], scotiaSquare);
+		assert.deepEqual(result[1], stangenpyramide);
+		assert.deepEqual(result[0], universityOfZambia);
+	});
+
+	it('should be able to count the number of points it contains', function() {
+		assert.equal(list.count(), 4);
+	});
+
+	it('should reject invalid sorting', function() {
+		assert.throws(function(){list.sortByDistanceTo(googleHQ, 'test');});
+		assert.throws(function(){list.sortByDistanceTo(googleHQ, googleHQ);});
+		assert.throws(function(){list.sortByDistanceTo(googleHQ, [oneMarket, 'asc']);});
+	});
+
+	it('should reject invalid points', function() {
+		assert.throws(function(){list.addPoint(impossiblePoint)});
+		assert.throws(function(){list.addPoint('hello World')});
+		assert.throws(function(){list.addPoint(anotherImpossiblePoint)});
+		assert.throws(function(){list.addPoint(vectorWithoutEnd)});
 	});
 });
