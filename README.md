@@ -51,7 +51,7 @@ console.log(myPoint.isValid());
 
 ## Working with Vectors
 
-The vector constructor takes two arguments for a starting and an end point. These must be valid Point objects. The order of start an end is very important as a vector is directional. As of 2.0, the library is only able to calculate the distance of a vector so the order is not important right now, but will become important once bearing and other features come into play.
+The vector constructor takes two arguments for a starting and an end point. These must be valid Point objects. The order of start and end is very important as a vector is directional. As of 2.0, the library is only able to calculate the distance of a vector so the order is not important right now, but will become so once bearing and other features come into play.
 
 ```javascript
 var myVector = new greatCircle.Vector(myPoint, anotherPoint);
@@ -65,7 +65,7 @@ myVector.getDistance();
 
 ## Working with PointLists
 
-A pointlist is an aggregate of multiple points and can be used to determine the closest point to another or even sort all points by their distance to a given reference point.
+A pointlist is an aggregate of multiple points and can be used to determine the closest or fartherst point from another or even sort all points by their distance to a given reference point.
 
 ```javascript
 var myList = new greatCircle.PointList();
@@ -75,6 +75,9 @@ myList.addPoint(anotherPoint);
 
 console.log(myList.count());
 // Will output 2
+
+myList.getClosestPointTo(referencePoint);
+myList.getFarthestPointFrom(referencePoint);
 ```
 
 To sort all points within the list by their distance to or from another point you can use the ```sortByDistanceTo``` method. It will accept two parameters: The reference point to be used and a sorting parameter which accepts ```asc``` or ```desc```, default is ```asc```;
@@ -92,5 +95,6 @@ for (let point of myList) {
 	console.log(point);
 }
 
-// Will output all contained points by their distance in reference to the point and sorting given by a previous call to ```sortByDistanceTo```.
+// Will output all contained points by their distance in reference to the point and sorting given 
+// by a previous call to ```sortByDistanceTo```.
 ```
