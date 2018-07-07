@@ -76,6 +76,12 @@ describe('Point lists', function() {
 		assert.deepEqual(result[2], scotiaSquare);
 		assert.deepEqual(result[1], stangenpyramide);
 		assert.deepEqual(result[0], universityOfZambia);
+
+		list.sortByDistanceTo(null);
+
+		result = list.toArray();
+
+		assert.equal(result.length, 4);
 	});
 
 	it('should be able to count the number of points it contains', function() {
